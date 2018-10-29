@@ -1,5 +1,0 @@
-interface IConfig{
-  pool: {
-    
-  }
-}
