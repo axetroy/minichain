@@ -1,0 +1,12 @@
+{
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "rules": {
+    "object-literal-sort-keys": false,
+    "no-unused-variable": true,
+    "ordered-imports": false,
+    "no-console": false
+  },
+  "linterOptions": {
+    "exclude": ["./test/**/*.ts", "./src/**/*.test.ts"]
+  }
+}

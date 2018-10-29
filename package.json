@@ -1,0 +1,45 @@
+{
+  "name": "minichain",
+  "version": "0.1.0",
+  "description": "mini block chain implement with typescript",
+  "typings": "./dist/vm.d.ts",
+  "scripts": {
+    "precommit": "npm run lint && pretty-quick --staged",
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
+    "lint": "tslint -p ./ -c tslint.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axetroy/minichain.git"
+  },
+  "author": "Axetroy",
+  "license": "MIT",
+  "dependencies": {
+    "babel-types": "^6.26.0",
+    "babylon": "^6.18.0",
+    "crypto-js": "^3.1.9-1",
+    "koa": "^2.6.1",
+    "lodash.isfunction": "^3.0.9",
+    "ws": "^6.1.0"
+  },
+  "bugs": {
+    "url": "https://github.com/axetroy/minichain/issues"
+  },
+  "homepage": "https://github.com/axetroy/minichain#readme",
+  "devDependencies": {
+    "@types/crypto-js": "^3.1.43",
+    "@types/koa": "^2.0.46",
+    "@types/lodash": "^4.14.109",
+    "@types/node": "^9.6.0",
+    "@types/ws": "^6.0.1",
+    "husky": "^0.14.3",
+    "prettier": "^1.13.5",
+    "pretty-quick": "^1.6.0",
+    "ts-lint": "^4.5.1",
+    "ts-loader": "^4.4.1",
+    "ts-node": "^6.1.1",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "typescript": "^2.9.1"
+  }
+}
