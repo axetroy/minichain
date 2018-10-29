@@ -66,7 +66,7 @@ export class Peer {
         case MessageType.QUERY_LATEST:
           ws.send(JSON.stringify({
             type: MessageType.RESPONSE_BLOCKCHAIN,
-            data: JSON.stringify([this.chain.last])
+            data: JSON.stringify([this.chain.latest])
           }))
           break;
         // 获取整个区块链
@@ -91,29 +91,29 @@ export class Peer {
             (b1, b2) => b1.index - b2.index
           );
           // 收到的最新区块
-          const latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
+          const remoteLatestBlock = receivedBlocks[receivedBlocks.length - 1];
           // 当前本地的最新区块
-          const latestBlockHeld = this.chain.last;
+          const localLatestBlock = this.chain.latest;
 
           // 如果收到的最新区块的索引，大于本地的最新区块
           // 那么可能会进行同步操作
-          if (latestBlockReceived.index > latestBlockHeld.index) {
+          if (remoteLatestBlock.index > localLatestBlock.index) {
             console.log(
               'blockchain possibly behind. We got: ' +
-              latestBlockHeld.index +
+              localLatestBlock.index +
               ' Peer got: ' +
-              latestBlockReceived.index
+              remoteLatestBlock.index
             );
             // 如果本地区块的hash，是接受到的最新区块的上一个hash
             // 即: 最新本地区块 > 接受到的最新区块
-            if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
+            if (localLatestBlock.hash === remoteLatestBlock.previousHash) {
               console.log('We can append the received block to our chain');
               // 那么就认可这个区块， 加入到本地的区块链中
-              blockchain.push(latestBlockReceived);
+              blockchain.push(remoteLatestBlock);
               // 并且广播当前获取的最新区块
               this.broadcast({
                 type: MessageType.RESPONSE_BLOCKCHAIN,
-                data: JSON.stringify([this.chain.last])
+                data: JSON.stringify([this.chain.latest])
               });
             } else if (receivedBlocks.length === 1) {
               // 如果接受到的区块链长度为1, 那么这个区块链是刚刚创建的，没有从p2p网络中同步区块

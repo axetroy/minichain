@@ -8,7 +8,7 @@ export class BlockChain {
   constructor(private difficulty: number = 2) {
     this.chain.push(this.createGenesisBlock())
   }
-  public get last(): Block {
+  public get latest(): Block {
     return this.chain[this.chain.length - 1];
   }
   /**
@@ -21,7 +21,7 @@ export class BlockChain {
   }
   public minePendingTransactions(miningRewardAddress: string) {
     // 用所有待交易来创建新的区块并且开挖..
-    const block = new Block(this.last.index + 1, Date.now(), this.pendingTransactions, this.last.hash);
+    const block = new Block(this.latest.index + 1, Date.now(), this.pendingTransactions, this.latest.hash);
     block.mine(this.difficulty);
 
     // 将新挖的矿加入到链上
