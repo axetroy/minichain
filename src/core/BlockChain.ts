@@ -23,6 +23,7 @@ export class BlockChain {
   public createTransaction(transaction: Transaction) {
     // 推入待处理交易数组
     this.pendingTransactions.push(transaction);
+    return transaction
   }
   /**
    * 处理交易
