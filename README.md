@@ -22,5 +22,5 @@ npm install @axetroy/mimichain-cli -g
 # 生成私钥
 openssl ecparam -name secp256k1 -genkey > private.pem
 # 生成公钥
-openssl ec -in private.pem -pubout -outform DER | tail -c 65 | xxd -p -c 65
+openssl ec -in private.pem -pubout -outform DER | tail -c 65 | xxd -p -c 65 > key.pub
 ```

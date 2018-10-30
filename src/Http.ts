@@ -39,9 +39,12 @@ export class Http {
     });
     router.post("/transaction", async ctx => {
       const { fromAddress, toAddress, amount } = ctx.request.body;
-      ctx.body = this.blockchain.createTransaction(
-        new Transaction(fromAddress, toAddress, amount)
-      );
+      try {
+        const t = new Transaction(fromAddress, toAddress, amount);
+        ctx.body = this.blockchain.createTransaction(t);
+      } catch (err) {
+        ctx.body = err.message;
+      }
     });
     app.use(bodyParser());
     app.use(router.routes()).use(router.allowedMethods());

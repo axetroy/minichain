@@ -16,7 +16,7 @@ program
     "[public_key_path]",
     "path of public key file",
     /.*/,
-    resolve(os.homedir(), ".ssh", "id_rsa.pub")
+    resolve(process.cwd(), "key.pub")
   )
   .action((argv, options) => {
     const account = Container.get(Account);

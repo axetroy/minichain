@@ -26,7 +26,7 @@ export class BlockChain {
     // TODO: 校验私钥
     // 推入待处理交易数组
     this.pendingTransactions.push(transaction);
-    return transaction;
+    return transaction.toJson();
   }
   /**
    * 处理交易
