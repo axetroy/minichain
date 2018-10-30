@@ -1,5 +1,4 @@
 import { Service, Inject, Container } from "typedi";
-import { SHA256, RIPEMD160 } from "crypto-js";
 import * as crypto from "crypto";
 import * as Base58 from "bs58";
 import * as validate from "bitcoin-address-validation";

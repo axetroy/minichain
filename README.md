@@ -1,26 +1,35 @@
 ## 迷你的区块链
 
-基于 Typescript 打造的一个迷你的区块链程序
+这是一个试验性项目. 用 Typescript 开发，打造的一个迷你的区块链程序
 
-开发中...
+#### Milestone 1
 
-Roadmap
+- [ ] 比特币规则 (钱包生成地址/加密/交易规则等)
+- [ ] 钱包功能
+- [ ] 交易
+- [ ] 挖矿
+- [ ] 实现分布式区块
 
-- [ ] P2P 架构
+#### Milestone 2
+
 - [ ] 区块浏览器
-- [ ] 钱包地址
+- [ ] 发行代币
+- [ ] 智能合约
 
-### 安装命令行 (TODO)
+### 安装命令行
 
 ```bash
+# TODO: 未发布
 npm install @axetroy/mimichain-cli -g
 ```
 
-### 生成钱包地址 (TODO)
+### 生成钱包地址
 
 ```bash
 # 生成私钥
 openssl ecparam -name secp256k1 -genkey > private.pem
 # 生成公钥
 openssl ec -in private.pem -pubout -outform DER | tail -c 65 | xxd -p -c 65 > key.pub
+# 生产钱包地址
+npx @axetroy/mimichain-cli generate ./key.pub
 ```
