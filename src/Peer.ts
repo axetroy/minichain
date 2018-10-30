@@ -1,3 +1,4 @@
+import { Inject, Service, Container } from 'typedi'
 import * as WebSocket from 'ws'
 import { BlockChain } from './core/BlockChain'
 
@@ -7,14 +8,18 @@ enum MessageType {
   RESPONSE_BLOCKCHAIN
 }
 
+@Service()
 export class Peer {
+  @Inject() public blockchain!: BlockChain
   private server: WebSocket.Server | null = null
   // 初始化需要连接的服务器
   private initialPeers: string[] = process.env.PEERS ? process.env.PEERS.split(',') : []
   // 当前已链接的 socket
   private sockets: WebSocket[] = []
-  constructor(private chain: BlockChain) {
+  constructor() {
     // 连接至中心服务器
+    this.blockchain = Container.get(BlockChain)
+    this.blockchain.peer = this
     this.connect(this.initialPeers)
   }
   /**
@@ -22,29 +27,30 @@ export class Peer {
    * @param peers 
    */
   public connect(peers: string[]) {
-    /**
-     * 逐个创建p2p链接
-     */
     peers.forEach(peer => {
       // 使用Websocket协议
       const ws = new WebSocket(peer);
       // 链接成功后，进行初始化操作
-      ws.on('open', () => {
-        //
-        this.initConnection(ws)
-      });
-      ws.on('error', () => {
-        console.log('connection failed');
+      ws.on('open', () => this.initConnection(ws));
+      ws.on('error', (err) => {
+        console.log('connection failed', err);
       });
     });
   }
   /**
    * 创建本地服务器
    */
-  public serve(port: number) {
+  public listen(port: number) {
     const server = this.server = new WebSocket.Server({ port });
+    server.on('listening', () => {
+      console.log(`WebSocket server listen on port : ${port}`)
+    })
     server.on('connection', (ws) => this.initConnection(ws))
   }
+  /**
+   * 广播
+   * @param message 
+   */
   public broadcast(message) {
     this.sockets.forEach(ws => ws.send(JSON.stringify(message)));
   }
@@ -66,7 +72,7 @@ export class Peer {
         case MessageType.QUERY_LATEST:
           ws.send(JSON.stringify({
             type: MessageType.RESPONSE_BLOCKCHAIN,
-            data: JSON.stringify([this.chain.latest])
+            data: JSON.stringify([this.blockchain.latest])
           }))
           break;
         // 获取整个区块链
@@ -74,14 +80,14 @@ export class Peer {
           // write(ws, responseChainMsg());
           ws.send(JSON.stringify({
             type: MessageType.RESPONSE_BLOCKCHAIN,
-            data: JSON.stringify(this.chain.chain)
+            data: JSON.stringify(this.blockchain.chain)
           }))
           break;
         /**
          * 如果收到来自其他节点的区块消息
          */
         case MessageType.RESPONSE_BLOCKCHAIN:
-          const blockchain = this.chain.chain
+          const blockchain = this.blockchain.chain
           /**
            * 反序列化收到的区块链
            * 并且根据index从小到大排序
@@ -93,7 +99,7 @@ export class Peer {
           // 收到的最新区块
           const remoteLatestBlock = receivedBlocks[receivedBlocks.length - 1];
           // 当前本地的最新区块
-          const localLatestBlock = this.chain.latest;
+          const localLatestBlock = this.blockchain.latest;
 
           // 如果收到的最新区块的索引，大于本地的最新区块
           // 那么可能会进行同步操作
@@ -113,7 +119,7 @@ export class Peer {
               // 并且广播当前获取的最新区块
               this.broadcast({
                 type: MessageType.RESPONSE_BLOCKCHAIN,
-                data: JSON.stringify([this.chain.latest])
+                data: JSON.stringify([this.blockchain.latest])
               });
             } else if (receivedBlocks.length === 1) {
               // 如果接受到的区块链长度为1, 那么这个区块链是刚刚创建的，没有从p2p网络中同步区块
@@ -125,7 +131,7 @@ export class Peer {
               // 最新本地区块 > 区块A > 区块 > B > ... > 接受到的最新区块
               // 那么整条链就落后了，需要替换掉整块链
               console.log('Received blockchain is longer than current blockchain');
-              const success = this.chain.replaceChain(receivedBlocks)
+              const success = this.blockchain.replaceChain(receivedBlocks)
               if (success) {
                 this.broadcast(receivedBlocks);
               }

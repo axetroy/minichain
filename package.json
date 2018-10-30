@@ -4,6 +4,7 @@
   "description": "mini block chain implement with typescript",
   "typings": "./dist/vm.d.ts",
   "scripts": {
+    "start": "npx ts-node src/index.ts",
     "precommit": "npm run lint && pretty-quick --staged",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "lint": "tslint -p ./ -c tslint.json"
@@ -19,7 +20,11 @@
     "babylon": "^6.18.0",
     "crypto-js": "^3.1.9-1",
     "koa": "^2.6.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
     "lodash.isfunction": "^3.0.9",
+    "reflect-metadata": "^0.1.12",
+    "typedi": "^0.8.0",
     "ws": "^6.1.0"
   },
   "bugs": {

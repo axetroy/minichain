@@ -1,24 +1,33 @@
+import { Service } from 'typedi'
 import { Block } from './Block'
 import { Transaction } from './Transaction'
+import { Peer } from '../peer'
 
+@Service()
 export class BlockChain {
   public chain: Block[] = []
+  public peer!: Peer
   private pendingTransactions: Transaction[] = []// 在区块产生之间存储交易的地方
   private miningReward: string = '100' // 矿工挖矿得到的奖励
-  constructor(private difficulty: number = 2) {
+  private difficulty: number = 2
+  constructor() {
     this.chain.push(this.createGenesisBlock())
   }
   public get latest(): Block {
     return this.chain[this.chain.length - 1];
   }
   /**
-   * 添加新区块
-   * @param newBlock 
+   * 创建交易
+   * @param transaction 
    */
   public createTransaction(transaction: Transaction) {
     // 推入待处理交易数组
     this.pendingTransactions.push(transaction);
   }
+  /**
+   * 处理交易
+   * @param miningRewardAddress 
+   */
   public minePendingTransactions(miningRewardAddress: string) {
     // 用所有待交易来创建新的区块并且开挖..
     const block = new Block(this.latest.index + 1, Date.now(), this.pendingTransactions, this.latest.hash);
@@ -29,6 +38,8 @@ export class BlockChain {
 
     // 重置待处理交易列表并且发送奖励
     this.pendingTransactions = [new Transaction('', miningRewardAddress, this.miningReward)];
+
+    return block
   }
   /**
    * 获取地址的余额
