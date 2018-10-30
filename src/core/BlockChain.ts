@@ -1,12 +1,14 @@
 import { Service } from "typedi";
 import { Block } from "./Block";
 import { Transaction } from "./Transaction";
-import { Peer } from "../peer";
+import { Peer } from "../Peer";
+import { Account } from "./Account";
 
 @Service()
 export class BlockChain {
   public chain: Block[] = [];
   public peer!: Peer;
+  public account!: Account;
   private pendingTransactions: Transaction[] = []; // 在区块产生之间存储交易的地方
   private difficulty: number = 4;
   constructor() {

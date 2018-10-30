@@ -1,12 +1,17 @@
-import { Service, Inject } from "typedi";
+import { Service, Inject, Container } from "typedi";
 import { SHA256, RIPEMD160 } from "crypto-js";
 import * as Base58 from "bs58";
+import * as validate from "bitcoin-address-validation";
 import { BlockChain } from "./BlockChain";
 
 @Service()
 export class Account {
   @Inject()
   public blockchain!: BlockChain;
+  constructor() {
+    this.blockchain = Container.get(BlockChain);
+    this.blockchain.account = this;
+  }
   // 地址生成看考: https://www.jianshu.com/p/954e143e97d2
   public generateAddrFromPublicKey(publicKey: string): string {
     // hash160运算就是先进行SHA256, 再进行RMD160
@@ -23,6 +28,10 @@ export class Account {
       .slice(0, 8)
       .join("");
     return Base58.encode(Buffer.from(containPrefix + checksum, "hex"));
+  }
+  public isValidAddress(addr: string): boolean {
+    const result = validate(addr);
+    return !!result;
   }
   /**
    * 获取该地址的余额
