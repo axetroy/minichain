@@ -1,5 +1,7 @@
 ## 迷你的区块链
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/axetroy/minichain.svg)](https://greenkeeper.io/)
+
 这是一个试验性项目. 用 Typescript 开发，打造的一个迷你的区块链程序
 
 #### Milestone 1
